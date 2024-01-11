@@ -10,16 +10,15 @@ class NewExpense extends StatefulWidget {
 }
 
 class _NewExpenseState extends State<NewExpense> {
-  //create controller
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
-  // Create a variable of type date time or null.
   DateTime? _selectedDate;
+  Category _selectedCategory = Category.leisure;
 
   void _presentDatePicker() async {
     final now = DateTime.now();
     final firstDate = DateTime(now.year - 1, now.month, now.day);
-    // buildt in future object in flutter
+
     final pickedDate = await showDatePicker(
       context: context,
       initialDate: now,
@@ -29,6 +28,36 @@ class _NewExpenseState extends State<NewExpense> {
     setState(() {
       _selectedDate = pickedDate;
     });
+  }
+
+  void _submitExpenseData() {
+    // tryParse takes an string as an input and converts it into a double or returns null
+    final enteredAmount = double.tryParse(_amountController.text);
+    // if entered amount does not exist or is equal/less then 0 its invalid
+    final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
+
+    if (_titleController.text.trim().isEmpty ||
+        amountIsInvalid ||
+        _selectedDate == null) {
+      // Inbuilt flutter syntax to handle empty inputs
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Invalid input.'),
+          content:
+              const Text('Please enter a title, amount, date and category.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+              },
+              child: const Text('Okay'),
+            )
+          ],
+        ),
+      );
+      return;
+    }
   }
 
   @override
@@ -86,8 +115,33 @@ class _NewExpenseState extends State<NewExpense> {
               ),
             ],
           ),
+          const SizedBox(height: 16),
           Row(
             children: [
+              DropdownButton(
+                value: _selectedCategory,
+                items: Category.values
+                    .map(
+                      (item) => DropdownMenuItem(
+                        value: item,
+                        child: Text(
+                          item.name.toUpperCase(),
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) {
+                  if (value == null) {
+                    return;
+                  }
+                  setState(
+                    () {
+                      _selectedCategory = value;
+                    },
+                  );
+                },
+              ),
+              const Spacer(),
               TextButton(
                 onPressed: () {
                   // inbuild flutter function to close the overlay
@@ -99,10 +153,7 @@ class _NewExpenseState extends State<NewExpense> {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {
-                  print(_titleController.text);
-                  print(_amountController.text);
-                },
+                onPressed: _submitExpenseData,
                 child: const Text('Save expense'),
               ),
             ],
