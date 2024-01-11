@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:expense_tracker/models/expense.dart';
 
 class NewExpense extends StatefulWidget {
   const NewExpense({super.key});
@@ -11,6 +13,23 @@ class _NewExpenseState extends State<NewExpense> {
   //create controller
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
+  // Create a variable of type date time or null.
+  DateTime? _selectedDate;
+
+  void _presentDatePicker() async {
+    final now = DateTime.now();
+    final firstDate = DateTime(now.year - 1, now.month, now.day);
+    // buildt in future object in flutter
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: firstDate,
+      lastDate: now,
+    );
+    setState(() {
+      _selectedDate = pickedDate;
+    });
+  }
 
   @override
   //Dispose controller after use, flutter automatically handles this
@@ -33,17 +52,52 @@ class _NewExpenseState extends State<NewExpense> {
               label: Text('Title'),
             ),
           ),
-          TextField(
-            controller: _amountController,
-            maxLength: 50,
-            keyboardType: TextInputType.number,
-            decoration: const InputDecoration(
-              prefixText: '\$',
-              label: Text('Amount'),
-            ),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _amountController,
+                  maxLength: 50,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(
+                    prefixText: '\$',
+                    label: Text('Amount'),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    // The exlamationmark after the variable tells dart that this value will never be null
+                    Text(
+                      _selectedDate == null
+                          ? 'No Date Selected'
+                          : formatter.format(_selectedDate!),
+                    ),
+                    IconButton(
+                      onPressed: _presentDatePicker,
+                      icon: const Icon(Icons.calendar_month),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
           Row(
             children: [
+              TextButton(
+                onPressed: () {
+                  // inbuild flutter function to close the overlay
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(color: Color.fromARGB(255, 130, 130, 130)),
+                ),
+              ),
               ElevatedButton(
                 onPressed: () {
                   print(_titleController.text);
@@ -51,13 +105,6 @@ class _NewExpenseState extends State<NewExpense> {
                 },
                 child: const Text('Save expense'),
               ),
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  'Cancel',
-                  style: TextStyle(color: Color.fromARGB(255, 130, 130, 130)),
-                ),
-              )
             ],
           )
         ],
