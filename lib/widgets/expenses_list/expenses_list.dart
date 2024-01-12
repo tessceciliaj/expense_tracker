@@ -14,6 +14,10 @@ class ExpensesList extends StatelessWidget {
     return ListView.builder(
       itemCount: expenses.length,
       itemBuilder: (ctx, index) => Dismissible(
+        background: Container(
+          color: Theme.of(context).colorScheme.errorContainer,
+          margin: Theme.of(context).cardTheme.margin,
+        ),
         onDismissed: (direction) {
           onRemoveExpense(
             expenses[index],
