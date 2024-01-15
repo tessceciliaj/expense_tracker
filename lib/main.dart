@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:expense_tracker/widgets/expenses.dart';
 
-var kColorScheme = ColorScheme.fromSeed(seedColor: Colors.amberAccent);
+var kColorScheme = ColorScheme.fromSeed(seedColor: Colors.indigo);
 
-var kDarkColorScheme = ColorScheme.fromSeed(
-    brightness: Brightness.dark, seedColor: Colors.deepOrange);
+var kDarkColorScheme =
+    ColorScheme.fromSeed(brightness: Brightness.dark, seedColor: Colors.indigo);
 
 void main() {
   runApp(const MyApp());
