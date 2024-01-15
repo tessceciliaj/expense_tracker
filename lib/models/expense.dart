@@ -36,3 +36,30 @@ class Expense {
     return formatter.format(date);
   }
 }
+
+class ExpenseBucket {
+  const ExpenseBucket({
+    required this.category,
+    required this.expenses,
+  });
+
+  // Go through all, filter out expenses that belong to a specific category
+  ExpenseBucket.forCategory(List<Expense> allExpenses, this.category)
+      : expenses = allExpenses
+            .where((expense) => expense.category == category)
+            .toList();
+
+  final Category category;
+  final List<Expense> expenses;
+
+  double get totalExpenses {
+    double sum = 0;
+
+// going through a list, syntax for looping through every expense
+    for (final expense in expenses) {
+      sum += expense.amount; // sum = sum + expense.amount
+    }
+
+    return sum;
+  }
+}
